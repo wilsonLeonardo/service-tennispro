@@ -16,12 +16,12 @@ development:
 
 production:
   database:
-    dialect: mysql
-    host: localhost
-    port: 3306
-    username: root
-    password: 1Slushsad=
-    database: banco
+    dialect: postgres
+    host: db-tennispro-prod.postgres.database.azure.com
+    port: 5432
+    username: tennisprod@db-tennispro-prod
+    password: tennispro@2020
+    database: tennis
     logger: false
     dialectOptions:
       ssl:

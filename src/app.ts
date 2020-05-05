@@ -17,12 +17,15 @@ if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
 }
 
-const serviceAccount = require('./services/config/tennis-pro-d81a1-firebase-adminsdk-ut16e-952214cdce.json');
+const serviceAccount = require('./services/config/tennispro-48e71-firebase-adminsdk-c8sid-08522a3f6d');
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://tennis-pro-d81a1.firebaseio.com',
-});
+if (admin.apps.length === 0) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://tennispro-48e71.firebaseio.com',
+  });
+  console.log('firebase');
+}
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.database = sequelize;

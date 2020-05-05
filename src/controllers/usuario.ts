@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 
 import { successMessage, failMessage } from '~/helpers/handleResponse';
+import * as firebase from '~/services/firebase';
 import { genToken } from '~/services/token';
 import { Role } from '~/utils/constants';
 
@@ -115,6 +116,19 @@ export default {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .send(failMessage(HttpStatus.BAD_REQUEST, 'Erro ao atualizar usuário'));
+    }
+  },
+  async message(req: Request, res: Response) {
+    try {
+      firebase.push('messages/aaaabc', 'que????');
+
+      return res
+        .status(HttpStatus.OK)
+        .send(successMessage(HttpStatus.OK, 'deu bom'));
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(failMessage(HttpStatus.BAD_REQUEST, 'deu ruim'));
     }
   },
   async profile(req: Request, res: Response) {
