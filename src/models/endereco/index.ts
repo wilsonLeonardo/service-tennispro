@@ -1,0 +1,1 @@
+export { Endereco } from './endereco';

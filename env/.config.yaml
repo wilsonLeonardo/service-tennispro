@@ -1,0 +1,32 @@
+development:
+  database:
+    dialect: postgres
+    host: localhost
+    port: 5432
+    username: postgres
+    password: tennispro2020
+    database: tp
+    logger: true
+    dialectOptions:
+      ssl: false
+
+  auth:
+    secret: teste
+
+
+production:
+  database:
+    dialect: mysql
+    host: localhost
+    port: 3306
+    username: root
+    password: 1Slushsad=
+    database: banco
+    logger: false
+    dialectOptions:
+      ssl:
+        require: true
+        ca: ./certs/BaltimoreCyberTrustRoot.crt.pem
+
+  auth:
+    secret: teste

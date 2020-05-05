@@ -1,0 +1,1 @@
+export { Telefone } from './telefone';
