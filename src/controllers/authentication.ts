@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 
-import { push } from '~/services/firebase';
 import { genToken } from '~/services/token';
 
 import { successMessage, failMessage } from '../helpers/handleResponse';

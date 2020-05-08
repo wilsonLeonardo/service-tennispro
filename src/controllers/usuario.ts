@@ -118,19 +118,19 @@ export default {
         .send(failMessage(HttpStatus.BAD_REQUEST, 'Erro ao atualizar usuário'));
     }
   },
-  async message(req: Request, res: Response) {
-    try {
-      firebase.push('messages/aaaabc', 'que????');
+  // async message(req: Request, res: Response) {
+  //   try {
+  //     firebase.push('messages/aaaabc', 'que????');
 
-      return res
-        .status(HttpStatus.OK)
-        .send(successMessage(HttpStatus.OK, 'deu bom'));
-    } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send(failMessage(HttpStatus.BAD_REQUEST, 'deu ruim'));
-    }
-  },
+  //     return res
+  //       .status(HttpStatus.OK)
+  //       .send(successMessage(HttpStatus.OK, 'deu bom'));
+  //   } catch (error) {
+  //     return res
+  //       .status(HttpStatus.BAD_REQUEST)
+  //       .send(failMessage(HttpStatus.BAD_REQUEST, 'deu ruim'));
+  //   }
+  // },
   async profile(req: Request, res: Response) {
     try {
       if (req.user && req.user.id) {

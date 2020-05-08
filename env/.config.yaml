@@ -11,6 +11,7 @@ production:
       ssl:
         require: true
         ca: ./certs/BaltimoreCyberTrustRoot.crt.pem
+        rejectUnauthorized: false
 
   auth:
     secret: teste

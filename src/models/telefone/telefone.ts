@@ -7,14 +7,8 @@ import { Pessoa } from '../pessoa-jogadora/pessoa';
 
 @Table({ tableName: TELEFONE, modelName: TELEFONE })
 export class Telefone extends BaseEntity<Telefone> {
-  @Column(DataType.STRING(2))
-  public ddd!: string;
-
   @Column(DataType.STRING(9))
   public telefone!: string;
-
-  @Column(DataType.STRING(45))
-  public ramal!: string;
 
   @ForeignKey(() => Pessoa)
   @Column
