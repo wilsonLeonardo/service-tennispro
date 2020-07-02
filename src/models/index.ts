@@ -14,13 +14,16 @@ export const Entities = [
   PessoaJogadora.PessoaCampeonatos,
   PessoaJogadora.PessoaClubes,
   Telefone.Telefone,
+  Telefone.TelefoneClube,
   Endereco.Endereco,
+  Endereco.EnderecoClube,
   Clube.Clube,
   Clube.ClubeCampeonato,
   Clube.ClubeCampeonatoNiveis,
   Clube.ClubeCampeonatoStatus,
   Jogo.Jogo,
   Jogo.JogoStatus,
+  Mensagens.Mensagens,
 ];
 
 export const AllModels = {
@@ -29,4 +32,5 @@ export const AllModels = {
   ...Endereco,
   ...Clube,
   ...Jogo,
+  ...Mensagens,
 };

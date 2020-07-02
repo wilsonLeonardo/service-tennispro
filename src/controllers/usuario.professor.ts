@@ -1,6 +1,7 @@
 import cep from 'cep-promise';
 import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
+import { Op } from 'sequelize';
 
 import { successMessage, failMessage } from '~/helpers/handleResponse';
 import { genToken } from '~/services/token';
@@ -14,7 +15,7 @@ export default {
 
       const usuarioJson = {
         login: step1.email,
-        senha: step1.password,
+        senha: step1.senha,
         usuarioPerfilID: Role.Professor,
       };
       const usuario = await req.models.Usuario.create(usuarioJson, {
@@ -22,24 +23,14 @@ export default {
       });
 
       const pessoaJson = {
-        nome: step1.nomeCompleto,
-        dataNascimento: step1.dataNascimento,
-        email: step1.email,
+        nome: step1.nome,
+        dataNascimento: step1.nascimento,
         usuarioID: usuario.id,
-        planoId: step1.plano,
         nivelId: step1.nivel,
+        professorPreco: step1.preco,
       };
 
       const pessoa = await req.models.Pessoa.create(pessoaJson, {
-        transaction: t,
-      });
-
-      const telefoneJson = {
-        telefone: step1.telefone,
-        pessoaID: pessoa.id,
-      };
-
-      await req.models.Telefone.create(telefoneJson, {
         transaction: t,
       });
 
@@ -57,6 +48,15 @@ export default {
         transaction: t,
       });
 
+      const clubeJson = {
+        clubeID: step1.clube,
+        pessoaID: pessoa.id,
+      };
+
+      await req.models.PessoaClubes.create(clubeJson, {
+        transaction: t,
+      });
+
       await t.commit();
 
       const token = genToken(usuario);
@@ -65,9 +65,9 @@ export default {
         successMessage(
           await req.models.Usuario.findByPk(usuario.id, {
             include: [
+              req.models.Clube,
               {
                 model: req.models.Pessoa,
-                include: ['telefone'],
               },
               {
                 model: req.models.UsuarioPerfil,
@@ -87,6 +87,47 @@ export default {
           failMessage(
             HttpStatus.BAD_REQUEST,
             'Erro ao cadastrar professor',
+            error
+          )
+        );
+    }
+  },
+  async show(req: Request, res: Response) {
+    try {
+      const { endereco } = req.user.pessoa;
+
+      const professores = await req.models.Usuario.findAll({
+        where: { usuarioPerfilID: Role.Professor },
+        include: [
+          {
+            model: req.models.Pessoa,
+            include: [
+              req.models.UsuarioNivel,
+              {
+                model: req.models.PessoaClubes,
+                include: [req.models.Clube],
+              },
+              {
+                model: req.models.Endereco,
+                attributes: [],
+                where: {
+                  [Op.and]: [
+                    { estado: endereco.estado, cidade: endereco.cidade },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      });
+      return res.send(successMessage(professores, HttpStatus.OK));
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(
+          failMessage(
+            HttpStatus.BAD_REQUEST,
+            'Erro ao buscar professores',
             error
           )
         );

@@ -14,6 +14,7 @@ import {
 import { BaseEntity } from '~/utils/base.model';
 import { USUARIO } from '~/utils/constants';
 
+import { Clube } from '../clube/clube';
 import { Pessoa } from './pessoa';
 import { UsuarioPerfil } from './usuario.perfil';
 
@@ -25,6 +26,9 @@ export class Usuario extends BaseEntity<Usuario> {
   @Column
   public senha!: string;
 
+  @Column
+  public deviceIdentifier!: string;
+
   @Default(false)
   @Column
   public active!: boolean;
@@ -32,6 +36,9 @@ export class Usuario extends BaseEntity<Usuario> {
   @AllowNull
   @Column
   public imageFileName!: string;
+
+  @Column
+  public type!: string;
 
   @ForeignKey(() => UsuarioPerfil)
   @Column
@@ -41,6 +48,11 @@ export class Usuario extends BaseEntity<Usuario> {
     foreignKey: 'usuarioID',
   })
   public pessoa: Pessoa;
+
+  @HasOne(() => Clube, {
+    foreignKey: 'usuarioID',
+  })
+  public clube: Clube;
 
   @BelongsTo(() => UsuarioPerfil, {
     foreignKey: 'usuarioPerfilID',

@@ -32,11 +32,13 @@ export class Mensagens extends BaseEntity<Mensagens> {
 
   @BelongsTo(() => Pessoa, {
     foreignKey: 'pessoa1',
+    as: 'pess1',
   })
   public pess1: Pessoa;
 
   @BelongsTo(() => Pessoa, {
     foreignKey: 'pessoa2',
+    as: 'pess2',
   })
   public pess2: Pessoa;
 }

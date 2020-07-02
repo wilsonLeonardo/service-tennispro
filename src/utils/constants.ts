@@ -27,11 +27,13 @@ export const JOGO_STATUS = 'JogoStatus';
  * Telefone
  */
 export const TELEFONE = 'Telefone';
+export const TELEFONE_CLUBE = 'TelefoneClube';
 
 /**
  * Endereco
  */
 export const ENDERECO = 'Endereco';
+export const ENDERECO_CLUBE = 'EnderecoClube';
 
 /**
  * Mensagens

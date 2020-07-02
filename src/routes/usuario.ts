@@ -1,14 +1,31 @@
 import { Router } from 'express';
 
 import UsuarioController from '~/controllers/usuario';
-import { authMiddleware } from '~/middlewares';
+import { authMiddleware, Foto } from '~/middlewares';
 
 const router = Router();
 
 router.get('/profile', authMiddleware, UsuarioController.profile);
-router.put('/avatar', UsuarioController.setAvatar);
+router.post(
+  '/avatar',
+  Foto.single('file'),
+  authMiddleware,
+  UsuarioController.setAvatar
+);
 router.post('/', UsuarioController.create);
-router.put('/:id', UsuarioController.update);
-// router.post('/messages', UsuarioController.message);
+router.put('/update', authMiddleware, UsuarioController.update);
+router.put('/updateClube', authMiddleware, UsuarioController.updateClube);
+router.get('/campeonatos', authMiddleware, UsuarioController.meusCampeonatos);
+router.get(
+  '/campeonatosConcluidos',
+  authMiddleware,
+  UsuarioController.meusCampeonatosConcluidos
+);
+router.get('/email/:email', UsuarioController.findByEmail);
+router.patch(
+  '/device/:device',
+  authMiddleware,
+  UsuarioController.deviceIdentifier
+);
 
 export { router as UsuarioRouter };

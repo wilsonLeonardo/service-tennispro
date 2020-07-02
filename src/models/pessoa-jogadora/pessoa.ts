@@ -1,10 +1,9 @@
 import {
   Table,
   Column,
-  Unique,
   ForeignKey,
-  DataType,
   HasOne,
+  HasMany,
 } from 'sequelize-typescript';
 
 import { BaseEntity } from '~/utils/base.model';
@@ -12,6 +11,7 @@ import { PESSOA } from '~/utils/constants';
 
 import { Endereco } from '../endereco/endereco';
 import { Telefone } from '../telefone/telefone';
+import { PessoaClubes } from './pessoa.clubes';
 import { Usuario } from './usuario';
 import { UsuarioNivel } from './usuario.nivel';
 import { UsuarioPlano } from './usuario.plano';
@@ -24,9 +24,11 @@ export class Pessoa extends BaseEntity<Pessoa> {
   @Column
   public dataNascimento!: Date;
 
-  @Unique
   @Column
-  public email!: string;
+  public dataLimitePlano!: Date;
+
+  @Column
+  public professorPreco!: number;
 
   @ForeignKey(() => Usuario)
   @Column
@@ -56,6 +58,9 @@ export class Pessoa extends BaseEntity<Pessoa> {
     foreignKey: 'id',
   })
   public endereco!: Endereco;
+
+  @HasMany(() => PessoaClubes)
+  public clubes!: PessoaClubes[];
 
   @HasOne(() => UsuarioNivel, {
     sourceKey: 'nivelId',

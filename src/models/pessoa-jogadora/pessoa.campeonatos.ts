@@ -15,4 +15,14 @@ export class PessoaCampeonatos extends BaseEntity<PessoaCampeonatos> {
   @ForeignKey(() => Pessoa)
   @Column
   public pessoaId!: number;
+
+  @BelongsTo(() => ClubeCampeonato, {
+    foreignKey: 'campeonatoId',
+  })
+  public campeonato: ClubeCampeonato;
+
+  @BelongsTo(() => Pessoa, {
+    foreignKey: 'pessoaId',
+  })
+  public pessoa: Pessoa;
 }

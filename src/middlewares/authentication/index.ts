@@ -41,12 +41,11 @@ export async function authMiddleware(
   req.user = await req.models.Usuario.findByPk((payload as Payload).id, {
     include: [
       {
+        model: req.models.Clube,
+      },
+      {
         model: req.models.Pessoa,
-        include: [
-          req.models.Genero,
-          req.models.PessoaIndicacao,
-          req.models.ContaInvestimento,
-        ],
+        include: [req.models.Endereco],
       },
       {
         model: req.models.UsuarioPerfil,

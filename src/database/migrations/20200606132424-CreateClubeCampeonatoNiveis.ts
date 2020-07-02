@@ -2,30 +2,29 @@ import SequelizeStatic, { QueryInterface } from 'sequelize';
 
 import {
   CLUBE_CAMPEONATO,
-  CLUBE,
-  CLUBE_CAMPEONATO_STATUS,
+  CLUBE_CAMPEONATO_NIVEIS,
+  USUARIO_NIVEL,
 } from '~/utils/constants';
 
 import { migrationDefaults } from '../defaults';
 
 export default {
   async up(queryInterface: QueryInterface, Sequelize: typeof SequelizeStatic) {
-    return queryInterface.createTable(CLUBE_CAMPEONATO, {
+    return queryInterface.createTable(CLUBE_CAMPEONATO_NIVEIS, {
       ...migrationDefaults(Sequelize),
-      nome: Sequelize.DataTypes.STRING,
       premio: Sequelize.DataTypes.FLOAT,
       taxaInscricao: Sequelize.DataTypes.FLOAT,
-      statusId: {
+      campeonatoID: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
-          model: CLUBE_CAMPEONATO_STATUS,
+          model: CLUBE_CAMPEONATO,
           key: 'id',
         },
       },
-      clubeID: {
+      nivelID: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
-          model: CLUBE,
+          model: USUARIO_NIVEL,
           key: 'id',
         },
       },
@@ -33,6 +32,6 @@ export default {
   },
 
   async down(queryInterface: QueryInterface) {
-    return queryInterface.dropTable(CLUBE_CAMPEONATO);
+    return queryInterface.dropTable(CLUBE_CAMPEONATO_NIVEIS);
   },
 };

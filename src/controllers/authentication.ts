@@ -13,6 +13,7 @@ export default {
       const user = await req.models.Usuario.findOne({
         where: { login },
         include: [
+          req.models.Clube,
           {
             model: req.models.Pessoa,
           },

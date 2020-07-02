@@ -17,14 +17,13 @@ if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
 }
 
-const serviceAccount = require('./services/config/tennispro-48e71-firebase-adminsdk-c8sid-08522a3f6d');
+const serviceAccount = require('../certs/tennispro-48e71-firebase-adminsdk-c8sid-08522a3f6d');
 
 if (admin.apps.length === 0) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: 'https://tennispro-48e71.firebaseio.com',
   });
-  console.log('firebase');
 }
 
 app.use((req: Request, res: Response, next: NextFunction) => {

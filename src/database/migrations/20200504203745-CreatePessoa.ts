@@ -1,6 +1,11 @@
 import SequelizeStatic, { QueryInterface } from 'sequelize';
 
-import { PESSOA, USUARIO } from '~/utils/constants';
+import {
+  PESSOA,
+  USUARIO,
+  USUARIO_NIVEL,
+  USUARIO_PLANO,
+} from '~/utils/constants';
 
 import { migrationDefaults } from '../defaults';
 
@@ -11,14 +16,24 @@ export default {
       nome: Sequelize.DataTypes.STRING,
       dataNascimento: Sequelize.DataTypes.DATE,
       cpf: Sequelize.DataTypes.STRING(14),
-      email: {
-        type: Sequelize.DataTypes.STRING,
-        unique: true,
-      },
       usuarioID: {
         type: Sequelize.INTEGER,
         references: {
           model: USUARIO,
+          key: 'id',
+        },
+      },
+      nivelId: {
+        type: Sequelize.DataTypes.INTEGER,
+        references: {
+          model: USUARIO_NIVEL,
+          key: 'id',
+        },
+      },
+      planoId: {
+        type: Sequelize.DataTypes.INTEGER,
+        references: {
+          model: USUARIO_PLANO,
           key: 'id',
         },
       },

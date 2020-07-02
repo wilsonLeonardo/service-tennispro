@@ -9,7 +9,7 @@ const {
 } = config;
 
 export function genToken(user: Usuario) {
-  const token = jwt.sign({ id: user.id }, secret);
+  const token = jwt.sign({ id: user.id }, secret, { expiresIn: '999 years' });
 
   return token;
 }
