@@ -197,6 +197,10 @@ export default {
         where: { pessoaId: req.user.pessoa.id },
       });
 
+      const date = new Date();
+
+      date.setDate(date.getDate() + 1);
+
       let campeonatos = await req.models.ClubeCampeonato.findAll({
         where: { statusId: 1 },
         include: [
@@ -215,12 +219,9 @@ export default {
         ],
       });
 
-      const date = new Date();
-      date.setDate(date.getDate() - 1);
-
       myCamps.forEach(d => {
         campeonatos = campeonatos.filter(
-          i => i.id !== d.campeonatoId && i.dataInicial <= date
+          i => i.id !== d.campeonatoId && date < i.dataInicial
         );
       });
 

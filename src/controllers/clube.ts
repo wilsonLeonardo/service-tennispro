@@ -147,22 +147,22 @@ export default {
   },
   async findByMyEndereco(req: Request, res: Response) {
     try {
-      const { endereco } = req.user.pessoa;
-
-      const clubes = await req.models.Clube.findAll({
-        attributes: ['id', 'nome'],
+      const myClubes = await req.models.PessoaClubes.findAll({
+        where: { pessoaID: req.user.pessoa.id },
+        attributes: [],
         include: [
           {
-            model: req.models.EnderecoClube,
-            attributes: [],
-            where: {
-              [Op.and]: [{ estado: endereco.estado, cidade: endereco.cidade }],
-            },
+            model: req.models.Clube,
+            attributes: ['id', 'nome'],
           },
         ],
       });
 
-      return res.send(successMessage(clubes));
+      return res.send(
+        successMessage(
+          myClubes.map(({ clube }) => ({ ...clube.get({ plain: true }) }))
+        )
+      );
     } catch (error) {
       return res
         .status(HttpStatus.BAD_REQUEST)
