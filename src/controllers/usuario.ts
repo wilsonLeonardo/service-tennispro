@@ -120,6 +120,7 @@ export default {
       });
 
       pessoa.nome = data.nome;
+      pessoa.professorPreco = data.preco || pessoa.professorPreco;
 
       const myCep = await cep(data.cep);
 
