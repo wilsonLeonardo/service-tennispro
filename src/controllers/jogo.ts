@@ -269,6 +269,20 @@ export default {
         );
       }
 
+      if (
+        (jogo.jogador1 === req.user.id && ganhador === 'jogador2') ||
+        (jogo.jogador2 === req.user.id && ganhador === 'jogador1')
+      ) {
+        jogo.ganhador = ganhador;
+        jogo.statusId = 4;
+
+        await jogo.save();
+
+        return res.send(
+          successMessage({ message: 'Jogo encerrado!' }, HttpStatus.OK)
+        );
+      }
+
       if (jogo.ganhador === null) {
         jogo.ganhador = ganhador;
         await jogo.save();
