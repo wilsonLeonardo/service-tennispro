@@ -258,8 +258,9 @@ export default {
       const jogo = await req.models.Jogo.findByPk(id);
 
       if (
-        (jogo.jogador1 === req.user.id && jogo.ganhador === 'jogador1') ||
-        (jogo.jogador2 === req.user.id && jogo.ganhador === 'jogador2')
+        (jogo.jogador1 === req.user.pessoa.id &&
+          jogo.ganhador === 'jogador1') ||
+        (jogo.jogador2 === req.user.pessoa.id && jogo.ganhador === 'jogador2')
       ) {
         return res.send(
           successMessage(
