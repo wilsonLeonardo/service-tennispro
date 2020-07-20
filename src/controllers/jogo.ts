@@ -257,6 +257,18 @@ export default {
 
       const jogo = await req.models.Jogo.findByPk(id);
 
+      if (
+        (jogo.jogador1 === req.user.id && jogo.ganhador === 'jogador1') ||
+        (jogo.jogador2 === req.user.id && jogo.ganhador === 'jogador2')
+      ) {
+        return res.send(
+          successMessage(
+            { message: 'Aguarde a confirmação do adversário' },
+            HttpStatus.OK
+          )
+        );
+      }
+
       if (jogo.ganhador === null) {
         jogo.ganhador = ganhador;
         await jogo.save();
