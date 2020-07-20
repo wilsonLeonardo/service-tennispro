@@ -257,13 +257,40 @@ export default {
 
       const jogo = await req.models.Jogo.findByPk(id);
 
-      jogo.ganhador = ganhador;
+      if (!jogo.ganhador) {
+        jogo.ganhador = ganhador;
+        await jogo.save();
+
+        return res.send(
+          successMessage(
+            { message: 'Aguarde a confirmação do adversário' },
+            HttpStatus.OK
+          )
+        );
+      }
+      if (jogo.ganhador === ganhador) {
+        jogo.statusId = 4;
+
+        await jogo.save();
+
+        return res.send(
+          successMessage(
+            { message: 'Jogo encerrado. Parabéns!' },
+            HttpStatus.OK
+          )
+        );
+      }
+
+      jogo.ganhador = null;
       jogo.statusId = 4;
 
       await jogo.save();
 
       return res.send(
-        successMessage({ message: 'Jogo encerrado. Parabéns!' }, HttpStatus.OK)
+        successMessage(
+          { message: 'Jogo anulado. Ambos declararam o mesmo resultado!' },
+          HttpStatus.BAD_REQUEST
+        )
       );
     } catch (error) {
       return res
