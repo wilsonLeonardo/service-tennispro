@@ -336,6 +336,7 @@ export default {
         where: {
           [Op.or]: [{ jogador1: id }, { jogador2: id }],
           statusId: 4,
+          ganhador: { [Op.not]: null },
         },
       });
 
@@ -350,7 +351,6 @@ export default {
             },
           ],
           statusId: 4,
-          ganhador: { [Op.not]: null },
         },
       });
 
