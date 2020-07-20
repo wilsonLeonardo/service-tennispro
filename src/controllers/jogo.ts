@@ -257,7 +257,7 @@ export default {
 
       const jogo = await req.models.Jogo.findByPk(id);
 
-      if (!jogo.ganhador) {
+      if (jogo.ganhador === null) {
         jogo.ganhador = ganhador;
         await jogo.save();
 
