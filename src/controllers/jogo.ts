@@ -271,8 +271,8 @@ export default {
       }
 
       if (
-        (jogo.jogador1 === req.user.id && ganhador === 'jogador2') ||
-        (jogo.jogador2 === req.user.id && ganhador === 'jogador1')
+        (jogo.jogador1 === req.user.pessoa.id && ganhador === 'jogador2') ||
+        (jogo.jogador2 === req.user.pessoa.id && ganhador === 'jogador1')
       ) {
         jogo.ganhador = ganhador;
         jogo.statusId = 4;
