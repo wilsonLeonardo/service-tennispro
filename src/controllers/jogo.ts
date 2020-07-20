@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 import { Op } from 'sequelize';
+import { eq } from 'sequelize/types/lib/operators';
 
 import { successMessage, failMessage } from '~/helpers/handleResponse';
 
@@ -349,6 +350,7 @@ export default {
             },
           ],
           statusId: 4,
+          ganhador: { [Op.not]: null },
         },
       });
 
