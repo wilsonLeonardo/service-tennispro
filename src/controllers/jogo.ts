@@ -143,6 +143,7 @@ export default {
           },
           'jogoClube',
         ],
+        order: [['data', 'ASC']],
       });
 
       return res.send(successMessage(jogo, HttpStatus.OK));
@@ -181,6 +182,7 @@ export default {
           },
           'jogoClube',
         ],
+        order: [['data', 'DESC']],
       });
 
       return res.send(successMessage(jogo, HttpStatus.OK));
@@ -219,6 +221,7 @@ export default {
           },
           'jogoClube',
         ],
+        order: [['data', 'ASC']],
       });
 
       return res.send(successMessage(jogo, HttpStatus.OK));
