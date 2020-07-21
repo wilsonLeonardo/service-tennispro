@@ -95,11 +95,15 @@ export default {
 
       await req.models.Jogo.create(jogoJson);
 
+      const notificationPeople = await req.models.Pessoa.findByPk(id, {
+        include: ['usuario'],
+      });
+
       notification.post('notifications', {
         app_id: 'c4401282-dd28-4cec-ae9f-e244d5c12758',
         contents: { en: 'Você possui um novo jogo pendente no app!' },
         headings: { en: 'Jogo' },
-        include_external_user_ids: [id],
+        include_external_user_ids: [notificationPeople.usuario.id],
       });
 
       return res.send(
