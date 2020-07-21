@@ -113,7 +113,40 @@ export default {
     const t = await req.database.transaction();
     try {
       const { id } = req.user.pessoa;
-      const { data } = req.body;
+      const { data, clube } = req.body;
+
+      if (clube) {
+        const pessoaID = req.user.pessoa.id;
+
+        const all = await req.models.PessoaClubes.findAll({
+          where: { pessoaID },
+        });
+
+        all.forEach(async x => {
+          if (clube.map(y => y.clube.id).indexOf(x.clubeID) === -1) {
+            console.log(x.clubeID);
+            await x.destroy({ transaction: t });
+          }
+        });
+        clube.forEach(async x => {
+          const exist = await req.models.PessoaClubes.findOne({
+            where: { clubeID: x.clube.id, pessoaID },
+            include: ['clube'],
+          });
+
+          if (!exist) {
+            const clubeJson = {
+              clubeID: x.clube.id,
+              pessoaID,
+            };
+
+            await req.models.PessoaClubes.create(clubeJson, {
+              transaction: t,
+            });
+          }
+        });
+      }
+
       const pessoa = await req.models.Pessoa.findByPk(id, { transaction: t });
       const endereco = await req.models.Endereco.findOne({
         where: { pessoaID: pessoa.id },

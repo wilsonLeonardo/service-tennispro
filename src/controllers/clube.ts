@@ -145,6 +145,22 @@ export default {
         );
     }
   },
+  async findAll(req: Request, res: Response) {
+    try {
+      const clubes = await req.models.Clube.findAll({
+        attributes: ['id', 'nome'],
+        order: ['nome'],
+      });
+
+      return res.send(successMessage(clubes));
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(
+          failMessage(HttpStatus.BAD_REQUEST, 'Erro ao encontrar clubes', error)
+        );
+    }
+  },
   async findByMyEndereco(req: Request, res: Response) {
     try {
       const myClubes = await req.models.PessoaClubes.findAll({
