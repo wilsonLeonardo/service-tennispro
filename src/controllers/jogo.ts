@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 import { Op } from 'sequelize';
-import { eq } from 'sequelize/types/lib/operators';
 
 import { successMessage, failMessage } from '~/helpers/handleResponse';
+import { notification } from '~/services/push';
 
 export default {
   async create(req: Request, res: Response) {
@@ -93,6 +94,13 @@ export default {
       }
 
       await req.models.Jogo.create(jogoJson);
+
+      notification.post('notifications', {
+        app_id: 'c4401282-dd28-4cec-ae9f-e244d5c12758',
+        contents: { en: 'Você possui um novo jogo pendente no app!' },
+        headings: { en: 'Jogo' },
+        include_external_user_ids: [id],
+      });
 
       return res.send(
         successMessage(
