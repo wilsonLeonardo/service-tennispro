@@ -120,7 +120,13 @@ export default {
           },
         ],
       });
-      return res.send(successMessage(professores, HttpStatus.OK));
+
+      return res.send(
+        successMessage(
+          professores.filter(p => p.pessoa !== null),
+          HttpStatus.OK
+        )
+      );
     } catch (error) {
       return res
         .status(HttpStatus.BAD_REQUEST)
