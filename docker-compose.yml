@@ -13,20 +13,19 @@ services:
       - postgres-network
     
   user:
-    build:
-        context: ./docker
-        dockerfile: Dockerfile
-    ports:
-        - "8082:82"
-        - "3000:3000"
-    privileged: true
-    tty: true
-    stdin_open: true
-    volumes:
-        - ./:/var/www/html
-     environment:
-        - "DB_HOST=postgres"
-        - "DB_PORT=5432"
+      build:
+          context: ./docker
+          dockerfile: Dockerfile
+      ports:
+          - "3001:3001"
+      privileged: true
+      tty: true
+      stdin_open: true
+      volumes:
+          - ./:/var/www/html
+      environment:
+          - "DB_HOST=postgres"
+          - "DB_PORT=5432"
 
   pgadmin:
     image: dpage/pgadmin4
