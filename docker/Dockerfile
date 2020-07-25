@@ -31,6 +31,10 @@ RUN cd / && ./configurations.sh -d -iall
 RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash    
 CMD echo ~/.bashrc && nvm install v10.15.0
 
+RUN cd / && ./configurations.sh -d -iall
+RUN apt-get -y install php7.2-pgsql postgresql-9.5
+RUN sed -i 's/;extension=pdo_pgsql/extension=pdo_pgsql/g' /etc/php/7.2/fpm/php.ini
+
 RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
