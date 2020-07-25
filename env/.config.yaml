@@ -6,7 +6,7 @@ development:
     username: postgres
     password: tennispro2020
     database: tp
-    logger: true
+    logger: false
     dialectOptions:
       ssl: false
 
