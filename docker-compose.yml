@@ -1,17 +1,6 @@
 version: '3'
 
 services:
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: "tennispro2020"
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - postgres-network
-    
   user:
       build:
           context: ./docker
@@ -26,6 +15,18 @@ services:
       environment:
           - "DB_HOST=postgres"
           - "DB_PORT=5432"
+          
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "tennispro2020"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - postgres-network
 
   pgadmin:
     image: dpage/pgadmin4
