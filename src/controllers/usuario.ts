@@ -292,7 +292,7 @@ export default {
           );
       }
 
-      user.imageFileName = (req.file as any).url;
+      user.imageFileName = (req.file as any).location;
       const newUser = await user.save();
       return res.send(successMessage(newUser));
     } catch (error) {

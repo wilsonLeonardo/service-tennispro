@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multer from 'multer';
 
 import UsuarioController from '~/controllers/usuario';
 import { authMiddleware, Foto } from '~/middlewares';
@@ -8,7 +9,7 @@ const router = Router();
 router.get('/profile', authMiddleware, UsuarioController.profile);
 router.post(
   '/avatar',
-  Foto.single('file'),
+  multer(Foto).single('file'),
   authMiddleware,
   UsuarioController.setAvatar
 );
