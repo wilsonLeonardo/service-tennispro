@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import crypto from 'crypto';
-import Multer from 'multer';
-import MulterS3 from 'multer-s3';
+import Multer from 'multer'; // eslint-disable-line
+import MulterS3 from 'multer-s3'; // eslint-disable-line
 import path from 'path';
 
 import config from '../../services/config';
