@@ -129,6 +129,7 @@ export default {
       await mensagem.save({ transaction: t });
       await t.commit();
 
+      console.log(moment(mensagem.updatedAt).format('YYYY-MM-DD HH:mm:ss'));
       const data = {
         userId: req.user.pessoa.id,
         time: moment(mensagem.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
