@@ -21,8 +21,10 @@ export const Entities = [
   Clube.ClubeCampeonato,
   Clube.ClubeCampeonatoNiveis,
   Clube.ClubeCampeonatoStatus,
+  Clube.Ranking,
   Jogo.Jogo,
   Jogo.JogoStatus,
+  Jogo.RankingJogo,
   Mensagens.Mensagens,
 ];
 

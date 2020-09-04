@@ -18,3 +18,24 @@ development:
   awsAccessKey: 'AKIAZ35OQ4JERN5NIDFA'
   awsSecretAccessKey: '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'
   awsDefaultRegion: 'sa-east-1'
+
+local:
+  database:
+    dialect: postgres
+    host: localhost
+    port: 5432
+    username: postgres
+    password: tennispro2020
+    database: tp
+    logger: true
+    dialectOptions:
+      ssl: false
+
+  storage: 'DefaultEndpointsProtocol=https;AccountName=storagedevtennispro;AccountKey=GL2YGT3jbBNoeFw04IlWDEItn0cCi/XV6XJohtfe804QT2i7O2oG09CQ1SnMYjUWkapf6q285QoqabBUMOex/w==;EndpointSuffix=core.windows.net'
+  
+  auth:
+    secret: teste
+
+  awsAccessKey: 'AKIAZ35OQ4JERN5NIDFA'
+  awsSecretAccessKey: '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'
+  awsDefaultRegion: 'sa-east-1'

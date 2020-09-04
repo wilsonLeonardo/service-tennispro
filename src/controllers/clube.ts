@@ -150,6 +150,7 @@ export default {
       const clubes = await req.models.Clube.findAll({
         attributes: ['id', 'nome'],
         order: ['nome'],
+        include: ['endereco'],
       });
 
       return res.send(successMessage(clubes));

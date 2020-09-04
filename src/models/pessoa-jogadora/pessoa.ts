@@ -9,6 +9,7 @@ import {
 import { BaseEntity } from '~/utils/base.model';
 import { PESSOA } from '~/utils/constants';
 
+import { Ranking } from '../clube/ranking';
 import { Endereco } from '../endereco/endereco';
 import { Telefone } from '../telefone/telefone';
 import { PessoaClubes } from './pessoa.clubes';
@@ -61,6 +62,9 @@ export class Pessoa extends BaseEntity<Pessoa> {
 
   @HasMany(() => PessoaClubes)
   public clubes!: PessoaClubes[];
+
+  @HasMany(() => Ranking)
+  public meusRankings!: Ranking[];
 
   @HasOne(() => UsuarioNivel, {
     sourceKey: 'nivelId',

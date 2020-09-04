@@ -16,6 +16,8 @@ export const CLUBE = 'Clube';
 export const CLUBE_CAMPEONATO = 'ClubeCampeonato';
 export const CLUBE_CAMPEONATO_NIVEIS = 'ClubeCampeonatoNiveis';
 export const CLUBE_CAMPEONATO_STATUS = 'ClubeCampeonatoStatus';
+export const RANKING = 'Ranking';
+export const RANKING_JOGO = 'RankingJogo';
 
 /**
  * Jogo

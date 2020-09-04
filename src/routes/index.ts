@@ -5,6 +5,7 @@ import { CampeonatoRouter } from './campeonato';
 import { ClubeRouter } from './clube';
 import { JogoRouter } from './jogo';
 import { MessageRouter } from './mensagens';
+import { RankingRouter } from './ranking';
 import { UsuarioRouter } from './usuario';
 import { UsuarioPerfilRouter } from './usuario.perfil';
 import { ProfessorRouter } from './usuario.professor';
@@ -19,5 +20,6 @@ router.use('/campeonato', CampeonatoRouter);
 router.use('/clube', ClubeRouter);
 router.use('/mensagem', MessageRouter);
 router.use('/jogo', JogoRouter);
+router.use('/ranking', RankingRouter);
 
 export { router };

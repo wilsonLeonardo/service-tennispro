@@ -37,6 +37,7 @@
     "multer-azure-storage": "^0.2.0",
     "multer-s3": "^2.9.0",
     "mysql2": "^2.1.0",
+    "node-cron": "^2.0.3",
     "node-jsencrypt": "^1.0.0",
     "pg": "^7.12.1",
     "reflect-metadata": "^0.1.13",
