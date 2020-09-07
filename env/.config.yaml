@@ -1,7 +1,7 @@
 development:
   database:
     dialect: postgres
-    host: ec2-18-223-151-5.us-east-2.compute.amazonaws.com
+    host: 15.228.3.203
     port: 5432
     username: postgres
     password: tennispro2020
