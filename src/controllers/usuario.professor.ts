@@ -22,12 +22,15 @@ export default {
         transaction: t,
       });
 
-      const dataFormatada = `${step1.nascimento.substring(
-        3,
-        6
-      )}${step1.nascimento.substring(0, 3)}${step1.nascimento.substring(6)}`;
+      let dataNascimento = null;
+      if (step1.nascimento) {
+        const dataFormatada = `${step1.nascimento.substring(
+          3,
+          6
+        )}${step1.nascimento.substring(0, 3)}${step1.nascimento.substring(6)}`;
 
-      const dataNascimento = new Date(dataFormatada);
+        dataNascimento = new Date(dataFormatada);
+      }
 
       const pessoaJson = {
         nome: step1.nome,
