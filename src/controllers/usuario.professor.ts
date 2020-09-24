@@ -34,6 +34,12 @@ export default {
 
       const pessoaJson = {
         nome: step1.nome,
+        sexo:
+          step1.sexo === '1' //eslint-disable-line
+            ? 'Masculino'
+            : step1.sexo === '2'
+            ? 'Feminino'
+            : null,
         dataNascimento,
         usuarioID: usuario.id,
         nivelId: step1.nivel,

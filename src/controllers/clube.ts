@@ -207,6 +207,10 @@ export default {
                 where: { usuarioPerfilID: Role.Usuario },
                 attributes: [],
               },
+              {
+                model: req.models.UsuarioNivel,
+                attributes: ['id'],
+              },
             ],
           },
         ],

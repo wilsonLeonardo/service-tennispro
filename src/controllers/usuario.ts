@@ -42,6 +42,12 @@ export default {
 
       const pessoaJson = {
         nome: step1.nome,
+        sexo:
+        step1.sexo === '1' //eslint-disable-line
+            ? 'Masculino'
+            : step1.sexo === '2'
+            ? 'Feminino'
+            : null,
         dataNascimento,
         email: step1.email,
         usuarioID: usuario.id,
@@ -134,7 +140,6 @@ export default {
 
         all.forEach(async x => {
           if (clube.map(y => y.clube.id).indexOf(x.clubeID) === -1) {
-            console.log(x.clubeID);
             await x.destroy({ transaction: t });
           }
         });

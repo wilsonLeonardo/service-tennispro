@@ -31,6 +31,9 @@ export class Pessoa extends BaseEntity<Pessoa> {
   @Column
   public professorPreco!: number;
 
+  @Column
+  public sexo!: string;
+
   @ForeignKey(() => Usuario)
   @Column
   public usuarioID!: number;
