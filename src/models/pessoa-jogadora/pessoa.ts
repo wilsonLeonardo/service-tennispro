@@ -59,7 +59,8 @@ export class Pessoa extends BaseEntity<Pessoa> {
   public usuario!: Usuario;
 
   @HasOne(() => Endereco, {
-    foreignKey: 'id',
+    sourceKey: 'id',
+    foreignKey: 'pessoaID',
   })
   public endereco!: Endereco;
 
