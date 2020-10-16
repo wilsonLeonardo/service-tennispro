@@ -74,14 +74,16 @@ export default {
         transaction: t,
       });
 
-      const clubeJson = {
-        clubeID: step1.clube,
-        pessoaID: pessoa.id,
-      };
+      if (step1.clube) {
+        const clubeJson = {
+          clubeID: step1.clube,
+          pessoaID: pessoa.id,
+        };
 
-      await req.models.PessoaClubes.create(clubeJson, {
-        transaction: t,
-      });
+        await req.models.PessoaClubes.create(clubeJson, {
+          transaction: t,
+        });
+      }
 
       await t.commit();
 
