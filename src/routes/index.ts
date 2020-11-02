@@ -6,6 +6,7 @@ import { ClubeRouter } from './clube';
 import { JogoRouter } from './jogo';
 import { MessageRouter } from './mensagens';
 import { RankingRouter } from './ranking';
+import { RankingCommunityRouter } from './ranking.community';
 import { UsuarioRouter } from './usuario';
 import { UsuarioPerfilRouter } from './usuario.perfil';
 import { ProfessorRouter } from './usuario.professor';
@@ -21,5 +22,6 @@ router.use('/clube', ClubeRouter);
 router.use('/mensagem', MessageRouter);
 router.use('/jogo', JogoRouter);
 router.use('/ranking', RankingRouter);
+router.use('/rankingCommunity', RankingCommunityRouter);
 
 export { router };

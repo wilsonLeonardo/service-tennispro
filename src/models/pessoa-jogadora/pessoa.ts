@@ -11,6 +11,7 @@ import { PESSOA } from '~/utils/constants';
 
 import { Ranking } from '../clube/ranking';
 import { Endereco } from '../endereco/endereco';
+import { RankingCommunityPosicao } from '../ranking-community/ranking.community.posicao';
 import { Telefone } from '../telefone/telefone';
 import { PessoaClubes } from './pessoa.clubes';
 import { Usuario } from './usuario';
@@ -69,6 +70,9 @@ export class Pessoa extends BaseEntity<Pessoa> {
 
   @HasMany(() => Ranking)
   public meusRankings!: Ranking[];
+
+  @HasMany(() => RankingCommunityPosicao)
+  public meusRankingsCommunity!: RankingCommunityPosicao[];
 
   @HasOne(() => UsuarioNivel, {
     sourceKey: 'nivelId',

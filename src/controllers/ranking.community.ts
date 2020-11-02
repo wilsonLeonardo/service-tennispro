@@ -4,94 +4,156 @@ import HttpStatus from 'http-status-codes';
 import { Op } from 'sequelize';
 
 import { successMessage, failMessage } from '~/helpers/handleResponse';
-import { Ranking, Clube } from '~/models/clube';
-import { RankingJogo } from '~/models/jogo';
+import {
+  RankingCommunity,
+  RankingCommunityJogos,
+  RankingCommunityPosicao,
+} from '~/models/ranking-community';
 // import { notification } from '~/services/push';
 
 export default {
   async create(req: Request, res: Response) {
+    const t = await req.database.transaction();
     try {
-      const { id } = req.params;
+      const { nome, senha } = req.body;
 
-      const rankingExists = await req.models.Ranking.findOne({
-        where: { clubeID: id, pessoaID: req.user.pessoa.id },
+      const exists = await req.models.RankingCommunity.findOne({
+        where: { ownerID: req.user.pessoa.id },
       });
 
-      if (rankingExists) {
+      if (exists)
         return res
           .status(HttpStatus.BAD_REQUEST)
           .send(
-            successMessage(
-              { message: 'Usuario já está inscrito nesse ranking!' },
-              HttpStatus.BAD_REQUEST
+            failMessage(
+              HttpStatus.BAD_REQUEST,
+              'Não é possivel criar outro ranking'
             )
           );
-      }
 
-      const rankingJogadores = await req.models.Ranking.count({
-        where: { clubeID: id },
-      });
-
-      if (rankingJogadores === 50) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .send(
-            successMessage(
-              { message: 'Este ranking não suporta novos jogadores!' },
-              HttpStatus.BAD_REQUEST
-            )
-          );
-      }
-
-      const rankingJson = {
-        pessoaID: req.user.pessoa.id,
-        clubeID: id,
-        posicao: rankingJogadores + 1,
+      const rankingCommunityJson = {
+        nome,
+        senha,
+        ownerID: req.user.pessoa.id,
       };
 
-      await req.models.Ranking.create(rankingJson);
+      const rankingCommunity = await req.models.RankingCommunity.create(
+        rankingCommunityJson,
+        { transaction: t }
+      );
+
+      const rankingCommunityPosicaoJson = {
+        posicao: 1,
+        estatistica: 0,
+        pessoaID: req.user.pessoa.id,
+        rankingCommunityID: rankingCommunity.id,
+      };
+
+      await req.models.RankingCommunityPosicao.create(
+        rankingCommunityPosicaoJson,
+        { transaction: t }
+      );
+
+      await t.commit();
 
       return res.send(
         successMessage(
           {
-            message: 'Inscrito no ranking com sucesso',
-            qtdJogadores: rankingJogadores,
+            message: 'Ranking criado com sucesso',
           },
           HttpStatus.OK
         )
       );
+    } catch (error) {
+      await t.rollback();
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(
+          failMessage(HttpStatus.BAD_REQUEST, 'Erro ao criar ranking', error)
+        );
+    }
+  },
+  async subscribe(req: Request, res: Response) {
+    try {
+      const { nome, senha } = req.body;
+
+      const ranking = await req.models.RankingCommunity.findOne({
+        where: { nome, senha, ownerID: { [Op.not]: req.user.pessoa.id } },
+      });
+
+      if (ranking) {
+        const posicao = await req.models.RankingCommunityPosicao.findOne({
+          where: {
+            pessoaID: req.user.pessoa.id,
+            rankingCommunityID: ranking.id,
+          },
+        });
+
+        if (posicao) {
+          return res
+            .status(HttpStatus.BAD_REQUEST)
+            .send(
+              failMessage(HttpStatus.BAD_REQUEST, 'Você já está nesse ranking')
+            );
+        }
+
+        const rankingJogadores = await req.models.RankingCommunityPosicao.count(
+          {
+            where: { rankingCommunityID: ranking.id },
+          }
+        );
+
+        if (rankingJogadores === 50) {
+          return res
+            .status(HttpStatus.BAD_REQUEST)
+            .send(
+              successMessage(
+                { message: 'Este ranking não suporta novos jogadores!' },
+                HttpStatus.BAD_REQUEST
+              )
+            );
+        }
+
+        const rankingJson = {
+          pessoaID: req.user.pessoa.id,
+          rankingCommunityID: ranking.id,
+          posicao: rankingJogadores + 1,
+          estatistica: 0,
+        };
+
+        await req.models.RankingCommunityPosicao.create(rankingJson);
+
+        return res.send(
+          successMessage(
+            {
+              message: 'Inscrito no ranking com sucesso',
+              qtdJogadores: rankingJogadores,
+            },
+            HttpStatus.OK
+          )
+        );
+      }
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(failMessage(HttpStatus.BAD_REQUEST, 'Ranking não encontrado'));
     } catch (error) {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .send(
           failMessage(
             HttpStatus.BAD_REQUEST,
-            'Erro ao se inscrever nesse ranking',
+            'Erro ao se inscrever no ranking',
             error
           )
         );
     }
   },
-  async meusRankings(req: Request, res: Response) {
+  async index(req: Request, res: Response) {
     try {
-      const meusRankings = await req.models.Ranking.findAll({
-        where: { pessoaID: req.user.pessoa.id },
-        attributes: ['clubeID', 'posicao'],
-      });
+      const { id } = req.params;
 
-      return res.send(successMessage(meusRankings, HttpStatus.OK));
-    } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send(
-          failMessage(HttpStatus.BAD_REQUEST, 'Erro ao buscar rankings', error)
-        );
-    }
-  },
-  async indexClube(req: Request, res: Response) {
-    try {
-      const podium = await req.models.Ranking.findAll({
-        where: { clubeID: req.user.clube.id, posicao: { [Op.lte]: 3 } },
+      const podium = await req.models.RankingCommunityPosicao.findAll({
+        where: { rankingCommunityID: id, posicao: { [Op.lte]: 3 } },
         attributes: ['posicao', 'estatistica'],
         limit: 3,
         include: [
@@ -116,8 +178,8 @@ export default {
         podium[1] = aux;
       }
 
-      const ranking = await req.models.Ranking.findAll({
-        where: { clubeID: req.user.clube.id },
+      const ranking = await req.models.RankingCommunityPosicao.findAll({
+        where: { rankingCommunityID: id, posicao: { [Op.gt]: 3 } },
         attributes: ['posicao', 'estatistica'],
         include: [
           {
@@ -133,12 +195,10 @@ export default {
         ],
         order: [['posicao', 'ASC']],
       });
-      const jogos = await req.models.RankingJogo.findAll({
+
+      const jogos = await req.models.RankingCommunityJogos.findAll({
         where: {
-          [Op.and]: [
-            { clubeID: req.user.clube.id },
-            { statusId: { [Op.ne]: 4 } },
-          ],
+          [Op.and]: [{ rankingCommunityID: id }, { statusId: { [Op.ne]: 4 } }],
         },
         attributes: ['id', 'statusId', 'ganhador'],
         order: [['createdAt', 'asc']],
@@ -149,9 +209,9 @@ export default {
             attributes: ['id', 'nome'],
             include: [
               {
-                model: req.models.Ranking,
-                where: { clubeID: req.user.clube.id },
-                attributes: ['clubeID', 'posicao'],
+                model: req.models.RankingCommunityPosicao,
+                where: { rankingCommunityID: id },
+                attributes: ['rankingCommunityID', 'posicao'],
               },
             ],
           },
@@ -161,9 +221,9 @@ export default {
             attributes: ['id', 'nome'],
             include: [
               {
-                model: req.models.Ranking,
-                where: { clubeID: req.user.clube.id },
-                attributes: ['clubeID', 'posicao'],
+                model: req.models.RankingCommunityPosicao,
+                where: { rankingCommunityID: id },
+                attributes: ['rankingCommunityID', 'posicao'],
               },
             ],
           },
@@ -192,19 +252,115 @@ export default {
         );
     }
   },
-  async clubeRemoveJogador(req: Request, res: Response) {
+  async meuRanking(req: Request, res: Response) {
+    try {
+      const meuRanking = await req.models.RankingCommunityPosicao.findOne({
+        include: [
+          {
+            model: req.models.RankingCommunity,
+            where: { ownerID: req.user.pessoa.id },
+          },
+        ],
+      });
+
+      return res.send(successMessage(meuRanking, HttpStatus.OK));
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(
+          failMessage(HttpStatus.BAD_REQUEST, 'Erro ao buscar ranking', error)
+        );
+    }
+  },
+  async otherRankings(req: Request, res: Response) {
+    try {
+      const meusRankings = await req.models.RankingCommunityPosicao.findAll({
+        where: { pessoaID: req.user.pessoa.id },
+        include: [
+          {
+            model: req.models.RankingCommunity,
+            where: {
+              ownerID: { [Op.not]: req.user.pessoa.id },
+            },
+          },
+        ],
+      });
+
+      return res.send(
+        successMessage(
+          meusRankings.filter(x => x.rankingCommunity !== null),
+          HttpStatus.OK
+        )
+      );
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(
+          failMessage(HttpStatus.BAD_REQUEST, 'Erro ao buscar rankings', error)
+        );
+    }
+  },
+  async gerenciarRanking(req: Request, res: Response) {
+    try {
+      const myRanking = await req.models.RankingCommunity.findOne({
+        where: { ownerID: req.user.pessoa.id },
+      });
+
+      const ranking = await req.models.RankingCommunityPosicao.findAll({
+        where: { rankingCommunityID: myRanking.id },
+        attributes: ['posicao', 'estatistica'],
+        include: [
+          {
+            model: req.models.Pessoa,
+            attributes: ['id', 'nome'],
+            include: [
+              {
+                model: req.models.Usuario,
+                attributes: ['id', 'imageFileName'],
+              },
+            ],
+          },
+        ],
+        order: [['posicao', 'ASC']],
+      });
+
+      return res.status(HttpStatus.OK).send(
+        successMessage(
+          {
+            ranking,
+          },
+          HttpStatus.OK
+        )
+      );
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(
+          failMessage(
+            HttpStatus.BAD_REQUEST,
+            'Erro ao buscar jogadores ranking',
+            error
+          )
+        );
+    }
+  },
+  async removeJogador(req: Request, res: Response) {
     const t = await req.database.transaction();
     try {
       const { id } = req.params;
 
-      const rankingJogador = await req.models.Ranking.findOne({
-        where: { pessoaID: id, clubeID: req.user.clube.id },
+      const myRanking = await req.models.RankingCommunity.findOne({
+        where: { ownerID: req.user.pessoa.id },
+      });
+
+      const rankingJogador = await req.models.RankingCommunityPosicao.findOne({
+        where: { pessoaID: id, rankingCommunityID: myRanking.id },
         transaction: t,
       });
 
-      const jogadorJogo = await req.models.RankingJogo.findOne({
+      const jogadorJogo = await req.models.RankingCommunityJogos.findOne({
         where: {
-          clubeID: req.user.clube.id,
+          rankingCommunityID: myRanking.id,
           [Op.or]: [{ jogador1: id }, { jogador2: id }],
         },
         transaction: t,
@@ -240,118 +396,12 @@ export default {
         );
     }
   },
-  async index(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-
-      const participoDoRanking = await req.models.Ranking.findOne({
-        where: { pessoaID: req.user.pessoa.id, clubeID: id },
-      });
-
-      const podium = await req.models.Ranking.findAll({
-        where: { clubeID: id, posicao: { [Op.lte]: 3 } },
-        attributes: ['posicao', 'estatistica'],
-        limit: 3,
-        include: [
-          {
-            model: req.models.Pessoa,
-            attributes: ['id', 'nome'],
-            include: [
-              {
-                model: req.models.Usuario,
-                attributes: ['id', 'imageFileName'],
-              },
-            ],
-          },
-        ],
-        order: [['posicao', 'ASC']],
-      });
-
-      if (podium.length > 2) {
-        const aux = podium[0];
-
-        podium[0] = podium[1]; //eslint-disable-line
-        podium[1] = aux;
-      }
-
-      const ranking = await req.models.Ranking.findAll({
-        where: { clubeID: id, posicao: { [Op.gt]: 3 } },
-        attributes: ['posicao', 'estatistica'],
-        include: [
-          {
-            model: req.models.Pessoa,
-            attributes: ['id', 'nome'],
-            include: [
-              {
-                model: req.models.Usuario,
-                attributes: ['id', 'imageFileName'],
-              },
-            ],
-          },
-        ],
-        order: [['posicao', 'ASC']],
-      });
-      const jogos = await req.models.RankingJogo.findAll({
-        where: { [Op.and]: [{ clubeID: id }, { statusId: { [Op.ne]: 4 } }] },
-        attributes: ['id', 'statusId', 'ganhador'],
-        order: [['createdAt', 'asc']],
-        include: [
-          {
-            model: req.models.Pessoa,
-            as: 'joga1',
-            attributes: ['id', 'nome'],
-            include: [
-              {
-                model: req.models.Ranking,
-                where: { clubeID: id },
-                attributes: ['clubeID', 'posicao'],
-              },
-            ],
-          },
-          {
-            model: req.models.Pessoa,
-            as: 'joga2',
-            attributes: ['id', 'nome'],
-            include: [
-              {
-                model: req.models.Ranking,
-                where: { clubeID: id },
-                attributes: ['clubeID', 'posicao'],
-              },
-            ],
-          },
-        ],
-      });
-
-      return res.send(
-        successMessage(
-          {
-            ranking,
-            jogos,
-            podium,
-            participoDoRanking: !!participoDoRanking,
-          },
-          HttpStatus.OK
-        )
-      );
-    } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send(
-          failMessage(
-            HttpStatus.BAD_REQUEST,
-            'Erro ao buscar informações do ranking',
-            error
-          )
-        );
-    }
-  },
   async updateGanhador(req: Request, res: Response) {
     try {
       const { ganhador } = req.body;
       const { id } = req.params;
 
-      const jogo = await req.models.RankingJogo.findByPk(id);
+      const jogo = await req.models.RankingCommunityJogos.findByPk(id);
 
       if (
         (jogo.jogador1 === req.user.pessoa.id &&
@@ -392,10 +442,10 @@ export default {
         );
       }
 
-      const jogador1 = await req.models.Ranking.findOne({
+      const jogador1 = await req.models.RankingCommunityPosicao.findOne({
         where: { pessoaID: jogo.jogador1 },
       });
-      const jogador2 = await req.models.Ranking.findOne({
+      const jogador2 = await req.models.RankingCommunityPosicao.findOne({
         where: { pessoaID: jogo.jogador2 },
       });
 
@@ -425,22 +475,24 @@ export default {
   },
   async resultadoPartidas() {
     try {
-      const qtdClubes = await Clube.count();
+      const qtdRankings = await RankingCommunity.count();
 
-      for (let i = 1; i <= qtdClubes; i += 1) {
-        const rankingJogos = await RankingJogo.findAll({ //eslint-disable-line
-          where: { [Op.and]: [{ clubeID: i }, { statusId: { [Op.ne]: 4 } }] },
+      for (let i = 1; i <= qtdRankings; i += 1) {
+        const rankingJogos = await RankingCommunityJogos.findAll({ //eslint-disable-line
+          where: {
+            [Op.and]: [{ rankingCommunityID: i }, { statusId: { [Op.ne]: 4 } }],
+          },
         });
 
         const qtdJogos = rankingJogos.length;
-        const qtdJogadores = await Ranking.count({ //eslint-disable-line
-          where: { clubeID: i },
+        const qtdJogadores = await RankingCommunityPosicao.count({ //eslint-disable-line
+          where: { rankingCommunityID: i },
         });
 
         if (qtdJogos > 0) {
           if (qtdJogadores % 2 !== 0 && qtdJogadores > 0 && qtdJogos > 0) {
-            const ultimoJogador = await Ranking.findOne({ //eslint-disable-line
-              where: { posicao: qtdJogadores, clubeID: i },
+            const ultimoJogador = await RankingCommunityPosicao.findOne({ //eslint-disable-line
+              where: { posicao: qtdJogadores, rankingCommunityID: i },
             });
             ultimoJogador.posicao -= 1;
             ultimoJogador.estatistica = 1;
@@ -448,12 +500,18 @@ export default {
           }
 
           for (let x = 0; x < qtdJogos; x += 1) {
-            const jogador1 = await Ranking.findOne({ //eslint-disable-line
-              where: { pessoaID: rankingJogos[x].jogador1, clubeID: i },
+            const jogador1 = await RankingCommunityPosicao.findOne({ //eslint-disable-line
+              where: {
+                pessoaID: rankingJogos[x].jogador1,
+                rankingCommunityID: i,
+              },
               paranoid: false,
             });
-            const jogador2 = await Ranking.findOne({ //eslint-disable-line
-              where: { pessoaID: rankingJogos[x].jogador2, clubeID: i },
+            const jogador2 = await RankingCommunityPosicao.findOne({ //eslint-disable-line
+              where: {
+                pessoaID: rankingJogos[x].jogador2,
+                rankingCommunityID: i,
+              },
               paranoid: false,
             });
             const posicaoAtualJogador1 = jogador1.posicao;
@@ -515,8 +573,8 @@ export default {
 
         if (qtdJogadores <= 1) continue; //eslint-disable-line
 
-        const jogadoresRanking = await Ranking.findAll({ //eslint-disable-line
-          where: { clubeID: i },
+        const jogadoresRanking = await RankingCommunityPosicao.findAll({ //eslint-disable-line
+          where: { rankingCommunityID: i },
           order: [['posicao', 'ASC']],
         });
 
@@ -535,11 +593,11 @@ export default {
           const jogoJson = {
             jogador1: jogadoresRanking[j].pessoaID,
             jogador2: jogadoresRanking[j + 1].pessoaID,
-            clubeID: i,
+            rankingCommunityID: i,
             statusId: 2,
           };
 
-          await RankingJogo.create(jogoJson); //eslint-disable-line
+          await RankingCommunityJogos.create(jogoJson); //eslint-disable-line
         }
       }
 

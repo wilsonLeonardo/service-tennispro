@@ -3,6 +3,7 @@ import * as Endereco from './endereco';
 import * as Jogo from './jogo';
 import * as Mensagens from './mensagens';
 import * as PessoaJogadora from './pessoa-jogadora';
+import * as RankingCommunity from './ranking-community';
 import * as Telefone from './telefone';
 
 export const Entities = [
@@ -26,6 +27,9 @@ export const Entities = [
   Jogo.JogoStatus,
   Jogo.RankingJogo,
   Mensagens.Mensagens,
+  RankingCommunity.RankingCommunity,
+  RankingCommunity.RankingCommunityJogos,
+  RankingCommunity.RankingCommunityPosicao,
 ];
 
 export const AllModels = {
@@ -35,4 +39,5 @@ export const AllModels = {
   ...Clube,
   ...Jogo,
   ...Mensagens,
+  ...RankingCommunity,
 };

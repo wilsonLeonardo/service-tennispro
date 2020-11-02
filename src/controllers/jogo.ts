@@ -355,6 +355,16 @@ export default {
         },
       });
 
+      const meusJogosRanking = await req.models.RankingJogo.count({
+        where: {
+          [Op.or]: [{ jogador1: id }, { jogador2: id }],
+          statusId: 4,
+          ganhador: { [Op.not]: null },
+        },
+      });
+
+      const jogosGeral = meusJogos + meusJogosRanking;
+
       const minhasVitorias = await req.models.Jogo.count({
         where: {
           [Op.or]: [
@@ -369,11 +379,27 @@ export default {
         },
       });
 
-      const minhaDerrotas = meusJogos - minhasVitorias;
+      const minhasVitoriasRanking = await req.models.RankingJogo.count({
+        where: {
+          [Op.or]: [
+            {
+              [Op.and]: [{ jogador1: id }, { ganhador: 'jogador1' }],
+            },
+            {
+              [Op.and]: [{ jogador2: id }, { ganhador: 'jogador2' }],
+            },
+          ],
+          statusId: 4,
+        },
+      });
+
+      const vitoriasGeral = minhasVitoriasRanking + minhasVitorias;
+
+      const minhaDerrotas = jogosGeral - vitoriasGeral;
 
       const data = {
-        jogos: meusJogos,
-        vitorias: minhasVitorias,
+        jogos: jogosGeral,
+        vitorias: vitoriasGeral,
         derrotas: minhaDerrotas,
       };
 
