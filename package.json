@@ -80,7 +80,7 @@
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
     "razzle-dev-utils": "^3.0.0",
-    "react-dev-utils": "^10.1.0",
+    "react-dev-utils": "^11.0.4",
     "sequelize-cli": "^5.5.0",
     "source-map-support": "^0.5.16",
     "start-server-webpack-plugin": "^2.2.5",
