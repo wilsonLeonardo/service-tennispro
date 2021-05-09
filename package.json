@@ -73,7 +73,7 @@
     "eslint-plugin-import-helpers": "^1.0.2",
     "eslint-plugin-prettier": "^3.1.0",
     "glob": "^7.1.6",
-    "handlebars": "^4.7.3",
+    "handlebars": "^4.7.7",
     "handlebars-loader": "^1.7.1",
     "html-minifier": "^4.0.0",
     "html-minifier-loader": "^1.4.1",
